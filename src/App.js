@@ -10,9 +10,7 @@ import Card from './components/Card'
 
 class App extends Component {
   state = {
-    dog: {
-      message: 'https://dog.ceo/api/img/retriever-golden/n02099601_2994.jpg'
-    },
+    dog: [],
     swipe: {
       xDown: null,
       yDown: null
@@ -77,30 +75,57 @@ class App extends Component {
   }
   
   fetchNextDog = () => {
+    this.setState( (prevState) => {
+      const dogCopy = [...prevState.dog]
+      dogCopy.shift()
+      return {
+        dog: dogCopy
+      }
+    })
+  }
+
+  fetchTenDogs = () => {
     const url = 'https://dog.ceo/api/breeds/image/random'
-    fetch(url)
+    Array.from(Array(10).keys()).map( () => {
+      fetch(url)
       .then(res => res.json())
       .then(data => {
         // console.log(data.message)
         // imageEl.src = data.message
-        this.setState({
-          dog: data
+        this.setState( (prevState) => {
+          const dogCopy = [...prevState.dog]
+          dogCopy.push(data)
+          return {
+            dog: dogCopy
+          }
         })
       })
+    })
   }
+
+
+  componentDidMount() {
+    this.fetchTenDogs()
+  }
+
 
   render() {
     const { dog } = this.state
+    if(dog.length==5) this.fetchTenDogs()
 
     return (
       <Container variation="fluid">
         <h1 className="text-center font-weight-bold">Swipe my Dogs</h1>
+        {!!dog[0] ?
         <Card
-          image={dog.message}
-          text="Swipe Left or Swipe Right"
+          image={dog[0].message}
+          text={`Swipe Left or Swipe Right - ${dog.length} dogs loaded`}
           onTouchStart={this.handleTouchStart}
           onTouchMove={this.handleTouchMove}
-        />
+        /> :
+          <p>Loading...</p>
+        }
+
         <Row>
           <Col>
             
