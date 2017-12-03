@@ -125,12 +125,6 @@ class App extends Component {
         /> :
           <p>Loading...</p>
         }
-
-        <Row>
-          <Col>
-            
-          </Col>
-        </Row>
       </Container>
     )
   }
